@@ -11,7 +11,7 @@ spec:
       uri: https://github.com/bjsheppard/python-api.git
   strategy:
     jenkinsPipelineStrategy:
-      jenkinsfilePath: ./Jenkinsfile
+      jenkinsfilePath: Jenkinsfile
     type: JenkinsPipeline
   triggers:
     - github:
