@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        node {label 'python'}
-    }
+    agent any
     environment {
         APPLICATION_NAME = 'python-nginx'
         GIT_REPO="https://github.com/bjsheppard/python-api.git"
