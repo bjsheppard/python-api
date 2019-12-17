@@ -1,4 +1,4 @@
-FROM cicd/nginx-ex:latest
+FROM docker-registry.default.svc:5000/dev/nginx
 
 # --- Python Installation ---
 RUN apk add --no-cache python3 && \
