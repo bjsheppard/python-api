@@ -74,7 +74,7 @@ pipeline {
             script {
                 openshift.withCluster() {
                     openshift.withProject(DEV_PROJECT) {
-                        openshift.newBuild("--name=${TEMPLATE_NAME}", "--docker-image=cicd/nginx-ex", "--binary=true")
+                        openshift.newBuild("--name=${TEMPLATE_NAME}", "--docker-image=nginx-ex:latest", "--binary=true")
                         }
                     }
                 }
