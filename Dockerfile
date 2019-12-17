@@ -1,4 +1,4 @@
-FROM nginx-ex:latest
+FROM cicd/nginx-ex:latest
 
 # --- Python Installation ---
 RUN apk add --no-cache python3 && \
