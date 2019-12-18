@@ -14,10 +14,13 @@ pipeline {
         PORT = 8081;
     }
     stages {
-        stage('Get Latest Code and Run CheckMarx Code Scan') {
+        stage('Get Latest Code') {
             steps {
                 git branch: "${GIT_BRANCH}", url: "${GIT_REPO}"
-
+            }
+        }
+        stage ('Run Static Code Analysis') {
+            steps {
                 step(
                     [$class: 'CxScanBuilder', comment: '', credentialsId: '', excludeFolders: '', excludeOpenSourceFolders: '', exclusionsSetting: 'global', 
                     failBuildOnNewResults: false, failBuildOnNewSeverity: 'HIGH', 
