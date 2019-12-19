@@ -92,14 +92,14 @@ pipeline {
                         postDataJson='{\"filter\":{\"name\":\"'${prj}'\"}}'
                         prjIdn=$(curl -k -H "Content-Type:application/json" -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/api/projects/query" --data "${postDataJson}" | python -c "import sys, json; idn=json.load(sys.stdin)[0]['id']; print(idn)")
                         #get project's tool-connector id(s) (TODO:iterate over all connectors if multiple)
-                        contorIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/x/tool-connector-config/entries/${prjIdn}" | python -c "import sys, json; print json.load(sys.stdin)[0]['id']")
+                        contorIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/x/tool-connector-config/entries/${prjIdn}" | python -c "import sys, json; idn=json.load(sys.stdin)[0]['id']; print(idn)")
                         #trigger analysis
-                        jobIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/x/tool-connector-config/entries/${prjIdn}/${contorIdn}/analysis" | python -c "import sys, json; print json.load(sys.stdin)['jobId']")
+                        jobIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/x/tool-connector-config/entries/${prjIdn}/${contorIdn}/analysis" | python -c "import sys, json; id=json.load(sys.stdin)['jobId']; print(id)")
                         #wait for analysis to complete - Query Job Status endpoint until it responds with completed
                         jobSts="queued"
                         until [  $jobSts == "completed" ];
                         do
-                                        jobSts=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/api/jobs/${jobIdn}" | python -c "import sys, json; print json.load(sys.stdin)['status']" )
+                                        jobSts=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/api/jobs/${jobIdn}" | python -c "import sys, json; sts=json.load(sys.stdin)['status']; print(sts)" )
                                         #delay
                                         sleep 20s
                         done
@@ -108,7 +108,7 @@ pipeline {
                         if [ "$stdType" = "asdstig" ]; then
                                 #Use "countBy" field of standard name: "DISA STIG 4.3" to return standards filter field value - this may change on a per project basis hency why not hardcoded
                                 postDataJson='{\"filter\":{},\"countBy\":\"standard:27\"}'
-                                stdIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -H "Content-Type: application/json" -X POST "${codeDxServer}/codedx/api/projects/${prjIdn}/findings/grouped-counts" --data "${postDataJson}" | python -c "import sys, json; print json.load(sys.stdin)[0]['id']")
+                                stdIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -H "Content-Type: application/json" -X POST "${codeDxServer}/codedx/api/projects/${prjIdn}/findings/grouped-counts" --data "${postDataJson}" | python -c "import sys, json; idn=json.load(sys.stdin)[0]['id']; print(idn)")
                                 filtStr='{\"standard\":[\"'${stdIdn}'\"],\"~status\":\"gone\"}'
                                 #update rptname to reflect filter
                                 rptName=${rptName=}'_ASDSTIGv4.3'
@@ -123,12 +123,12 @@ pipeline {
                                 postDataJson='{\"filter\":'${filtStr}',\"config\":{\"includeStandards\":true,\"includeSource\":true,\"includeRuleDescriptions\":true}}'
                                 #postDataJson='{\"filter\":{},\"config\":{\"includeStandards\":true,\"includeSource\":true,\"includeRuleDescriptions\":true}}'
                         fi
-                        jobIdn=$(curl -k -H "Content-Type: application/json" -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/api/projects/${prjIdn}/report/${rptType}" --data "${postDataJson}" | python -c "import sys, json; print json.load(sys.stdin)['jobId']")
+                        jobIdn=$(curl -k -H "Content-Type: application/json" -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/api/projects/${prjIdn}/report/${rptType}" --data "${postDataJson}" | python -c "import sys, json; id=json.load(sys.stdin)['jobId']; print(id)")
                         jobSts="queued"
                         #wait for report to generate - Query Job Status endpoint until it responds with completed
                         until [  $jobSts == "completed" ];
                         do
-                                        jobSts=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/api/jobs/${jobIdn}" | python -c "import sys, json; print json.load(sys.stdin)['status']" )
+                                        jobSts=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/api/jobs/${jobIdn}" | python -c "import sys, json; sts=json.load(sys.stdin)['status']; print(sts)" )
                                         #delay
                                         sleep 20s
                         done
