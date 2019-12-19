@@ -90,7 +90,7 @@ pipeline {
                         #--------------------------------------------------------------------------------------------------------------------------------------------------------------
                         #retrieve project id (get first match-should be unique)
                         postDataJson='{\"filter\":{\"name\":\"'${prj}'\"}}'
-                        prjIdn=$(curl -k -H "Content-Type:application/json" -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/api/projects/query" --data "${postDataJson}" | python -c "import sys, json; print json.load(sys.stdin)[0]['id']")
+                        prjIdn=$(curl -k -H "Content-Type:application/json" -H "API-Key:$ApiTokenCodeDx" -X POST "${codeDxServer}/codedx/api/projects/query" --data "${postDataJson}" | python -c "import sys, json; idn=json.load(sys.stdin)[0]['id']; print(idn)")
                         #get project's tool-connector id(s) (TODO:iterate over all connectors if multiple)
                         contorIdn=$(curl -k -H "API-Key:$ApiTokenCodeDx" -X GET "${codeDxServer}/codedx/x/tool-connector-config/entries/${prjIdn}" | python -c "import sys, json; print json.load(sys.stdin)[0]['id']")
                         #trigger analysis
