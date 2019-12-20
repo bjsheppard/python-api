@@ -84,7 +84,7 @@ pipeline {
                         #pdf or xml
                         rptType="xml"
                         #asdstig or none
-                        stdType="asdstig"
+                        stdType="none"
                         #---constant--- (do not modify)
                         codeDxServer="https://services.csa.spawar.navy.mil"
                         #--------------------------------------------------------------------------------------------------------------------------------------------------------------
