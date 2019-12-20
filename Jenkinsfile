@@ -34,10 +34,17 @@ pipeline {
             steps {
                 sh '''
                 source bin/activate
-                nosetests app --with-xunit
+                nosetests app --with-xunit --with-xcoverage --xcoverage-file=coverage.xml
                 deactivate
                 '''
                 junit "nosetests.xml"
+            }
+        }
+        stage ('Run SonarQube Scanner') {
+            steps {
+                node ('sonar') {
+                    git branch: "${GIT_BRANCH}", url: "${GIT_REPO}"
+                }
             }
         }
         stage ('Run Static Code Analysis') {
